@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f3f2fa">
+  <title>Bank DApp · Sepolia</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #21203a;
+      --muted: #625e78;
+      --line: #e4e0ef;
+      --accent: #5938c9;
+      --radius: 24px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(ellipse at 88% 0%, #e8dfff, transparent 43%), #f3f2fa;
+      color: var(--ink);
+      font: 1rem/1.55 system-ui, sans-serif;
+    }
+    .shell { width: min(100% - 2rem, 70rem); margin-inline: auto; }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      padding-block: 1.5rem;
+      border-bottom: 1px solid var(--line);
+    }
+    .brand, .network { display: inline-flex; align-items: center; gap: .65rem; }
+    .brand { font-size: 1.12rem; font-weight: 750; }
+    .mark {
+      display: grid;
+      place-items: center;
+      width: 2.5rem;
+      aspect-ratio: 1;
+      border-radius: 12px;
+      color: white;
+      background: var(--accent);
+      font-size: 1.35rem;
+    }
+    .network {
+      border: 1px solid #dcd1f4;
+      border-radius: 999px;
+      padding: .35rem .8rem;
+      background: #f8f4ff;
+      color: #4f3487;
+      font-size: .875rem;
+      font-weight: 650;
+    }
+    main { padding-block: clamp(2rem, 6vw, 4.25rem) 1.5rem; }
+    h1, h2, p { margin: 0; }
+    h1 { margin-bottom: 1.45rem; font-size: clamp(2rem, 5vw, 3.3rem); letter-spacing: -.035em; }
+    h2 { font-size: 1.2rem; }
+    .grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 1rem; }
+    .card { padding: clamp(1.2rem, 3vw, 2rem); border-radius: var(--radius); }
+    .balance-card {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      min-width: 0;
+      min-height: 20rem;
+      color: white;
+      background:
+        radial-gradient(ellipse at 98% 0%, #6e50bc 0%, transparent 53%),
+        linear-gradient(132deg, #241647, #3b246b);
+      box-shadow: 0 16px 38px #38226328;
+    }
+    .balance-card h2, .unit { color: #e2d8f6; }
+    .balance {
+      margin-block: auto;
+      padding-block: 1rem;
+      font-size: clamp(2.6rem, 6vw, 4.7rem);
+      font-weight: 730;
+      line-height: 1.12;
+      letter-spacing: -.045em;
+      overflow-wrap: anywhere;
+      font-variant-numeric: tabular-nums;
+    }
+    .unit { font-size: 1rem; font-weight: 650; letter-spacing: .06em; }
+    .transfer-card { background: #fff; border: 1px solid var(--line); box-shadow: 0 12px 35px #2416470c; }
+    .transfer-card h2 { margin-bottom: 1.25rem; }
+    label { color: var(--muted); font-size: .92rem; font-weight: 630; }
+    .amount-field {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      margin-block: .4rem 1rem;
+      padding: .7rem .95rem;
+      border: 1px solid #d8d2e6;
+      border-radius: 13px;
+      background: #faf8fe;
+    }
+    .amount-field:focus-within { outline: 2px solid var(--accent); outline-offset: 1px; }
+    .amount-field span { color: var(--muted); font-size: .88rem; font-weight: 700; }
+    input { width: 100%; min-width: 0; border: 0; outline: 0; background: transparent; color: var(--ink); font: inherit; font-size: 1.4rem; }
+    input::placeholder { color: #787189; }
+    .actions { display: grid; grid-template-columns: 1fr 1fr; gap: .65rem; }
+    button { min-height: 2.9rem; padding: .6rem .9rem; border-radius: 12px; border: 1px solid transparent; font: inherit; font-weight: 680; cursor: pointer; }
+    button:focus-visible, a:focus-visible { outline: 3px solid #8063e4; outline-offset: 3px; }
+    button:disabled { cursor: default; }
+    .primary { color: white; background: var(--accent); }
+    .primary:not(:disabled):hover { background: #4929b1; }
+    .secondary { background: #f4efff; color: #4e32a5; border-color: #dfd5f5; }
+    .secondary:not(:disabled):hover { background: #ece4fc; }
+    .primary:disabled, .secondary:disabled { color: #655d78; background: #ede9f4; border-color: #e6e0ee; }
+    .balance-card button { color: #fff; background: #ffffff1c; border-color: #ffffff50; }
+    .balance-card button:not(:disabled):hover { background: #ffffff30; }
+    .balance-card button:disabled { color: #ded3f0; opacity: .75; }
+    .wallet {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-top: 1rem;
+      padding: 1rem 1.25rem;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: white;
+    }
+    .wallet h2 { font-size: 1rem; }
+    .wallet button { flex-shrink: 0; }
+    #account, #status { overflow-wrap: anywhere; color: var(--muted); font-size: .9rem; }
+    #account { font-family: ui-monospace, monospace; }
+    #account:empty { display: none; }
+    a { color: #4e32a5; }
+    #transaction { margin-top: .5rem; font-size: .875rem; }
+    #transaction:not([hidden]) { display: inline-block; }
+    footer { display: flex; flex-wrap: wrap; gap: .4rem 1.5rem; padding-bottom: 1.5rem; color: var(--muted); font-size: .875rem; }
+    footer span { color: var(--ink); font-weight: 650; }
+    @media (max-width: 43rem) {
+      .grid { grid-template-columns: 1fr; }
+      .balance-card { min-height: 15rem; }
+    }
+    @media (max-width: 30rem) {
+      .topbar { padding-block: 1rem; }
+      .wallet { align-items: flex-start; flex-direction: column; }
+    }
+  </style>
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <header class="shell topbar">
+    <div class="brand"><span class="mark" aria-hidden="true">Ξ</span> Bank DApp</div>
+    <span class="network">Sepolia Testnet</span>
+  </header>
+
+  <main class="shell">
+    <h1>บัญชีธนาคาร</h1>
+    <div class="grid">
+      <section class="card balance-card" aria-labelledby="balance-heading">
+        <h2 id="balance-heading">ยอดฝากในสัญญา</h2>
+        <div class="balance"><output id="balance">—</output> <span class="unit">ETH</span></div>
+        <button id="check" type="button" disabled>เช็กยอดฝาก</button>
+      </section>
+
+      <section class="card transfer-card" aria-labelledby="transfer-heading">
+        <h2 id="transfer-heading">ฝากและถอน</h2>
+        <label for="amount">จำนวน ETH</label>
+        <div class="amount-field">
+          <input id="amount" type="text" inputmode="decimal" placeholder="0.001" autocomplete="off">
+          <span aria-hidden="true">ETH</span>
+        </div>
+        <div class="actions">
+          <button class="primary" id="deposit" type="button" disabled>ฝาก</button>
+          <button class="secondary" id="withdraw" type="button" disabled>ถอน</button>
+        </div>
+        <a id="transaction" target="_blank" rel="noopener noreferrer" hidden>ดูธุรกรรมบน Sepolia Etherscan</a>
+      </section>
+    </div>
+
+    <section class="wallet" aria-labelledby="wallet-heading">
+      <div>
+        <h2 id="wallet-heading">กระเป๋าเงิน</h2>
+        <p id="account"></p>
+        <p id="status" role="status">กำลังโหลด DApp…</p>
+      </div>
+      <button class="primary" id="connect" type="button" disabled>เชื่อมต่อ MetaMask</button>
+    </section>
+  </main>
+
+  <footer class="shell">
+    <p>รหัสนักศึกษา <span id="student-id">—</span></p>
+    <p>ชื่อ–นามสกุล <span id="student-name">—</span></p>
+  </footer>
+</body>
+</html>
